@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Valentine 💕</title>
+
+<style>
+:root {
+  --pink: #f7c6d9;
+  --lav: #e6ddff;
+  --mint: #e7faf1;
+  --text: #4a2b3a;
+}
+
+* {
+  box-sizing: border-box;
+  font-family: "Arial Rounded MT Bold", "Comic Sans MS", system-ui;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  overflow: hidden;
+  background: linear-gradient(var(--lav), var(--pink));
+  color: var(--text);
+}
+
+/* clouds */
+.clouds {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 120px;
+  background:
+    radial-gradient(circle at 20% 60%, white 40px, transparent 41px),
+    radial-gradient(circle at 35% 60%, white 55px, transparent 56px),
+    radial-gradient(circle at 55% 60%, white 45px, transparent 46px),
+    radial-gradient(circle at 70% 60%, white 60px, transparent 61px);
+  background-repeat: repeat-x;
+  background-size: 300px 120px;
+  z-index: 1;
+}
+
+/* flex screen wrapper */
+.screen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 16px;
+  position: relative;
+  z-index: 2;
+}
+
+/* main card */
+.card {
+  max-width: 90vw;
+  width: 420px;
+  min-width: 260px;
+  background: var(--mint);
+  padding: 28px 24px 56px;
+  border-radius: 30px;
+  text-align: center;
+  box-shadow: 0 20px 35px rgba(0,0,0,0.15);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+h1 {
+  font-size: clamp(26px, 5vw, 42px);
+  margin-bottom: 10px;
+}
+
+p {
+  min-height: 1.2em;
+}
+
+button {
+  font-size: clamp(18px, 4vw, 24px);
+  padding: 12px 28px;
+  margin: 6px;
+  border-radius: 20px;
+  border: none;
+  cursor: pointer;
+  background: white;
+  box-shadow: 0 6px 0 #d8b5c3;
+}
+
+button:hover {
+  transform: translateY(-2px);
+}
+
+/* happy cat */
+#happyCat {
+  position: absolute;
+  bottom: -220px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(220px, 55vw);
+  transition: bottom 0.4s ease, left 0.2s ease, top 0.2s ease;
+  pointer-events: none;
+  mix-blend-mode: multiply;
+  z-index: 3;
+}
+
+/* rain */
+.rain {
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(120,120,255,0.4),
+    rgba(120,120,255,0.4) 2px,
+    transparent 2px,
+    transparent 12px
+  );
+  animation: rain 0.3s linear infinite;
+  z-index: 2;
+}
+
+@keyframes rain {
+  from { background-position: 0 0; }
+  to { background-position: 0 20px; }
+}
+
+/* explosion */
+.explosion {
+  position: absolute;
+  font-size: 80px;
+  animation: boom 0.6s ease-out forwards;
+  z-index: 4;
+}
+
+@keyframes boom {
+  from { transform: scale(0.5); opacity: 1; }
+  to { transform: scale(2); opacity: 0; }
+}
+
+/* stars */
+.star {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: gold;
+  clip-path: polygon(
+    50% 0%, 61% 38%, 100% 38%,
+    68% 59%, 79% 100%, 50% 75%,
+    21% 100%, 32% 59%, 0% 38%,
+    39% 38%
+  );
+  animation: sparkle 1.5s infinite alternate;
+}
+
+@keyframes sparkle {
+  from { transform: scale(0.7) rotate(0deg); opacity: 0.6; }
+  to { transform: scale(1.2) rotate(20deg); opacity: 1; }
+}
+</style>
+</head>
+
+<body>
+<div class="clouds"></div>
+
+<div class="screen">
+  <div class="card" id="card">
+    <h1 id="question">ayesha will you be my valentine?</h1>
+    <p id="subtext"></p>
+    <div>
+      <button onclick="yesClick()">YES</button>
+      <button onclick="noClick()">NO</button>
+    </div>
+  </div>
+</div>
+
+<img src="happy-cat.png" id="happyCat">
+
+<script>
+let yesCount = 0;
+let chaseClicks = 0;
+
+const chaseMessages = [
+  "too slow",
+  "almost got me there",
+  "me and who..",
+  "oh nah"
+];
+
+function yesClick() {
+  yesCount++;
+  const cat = document.getElementById("happyCat");
+  cat.style.bottom = (-220 + yesCount * 60) + "px";
+
+  if (yesCount === 5) {
+    document.getElementById("question").innerText = "first you have to catch the cat";
+    cat.style.pointerEvents = "auto";
+    startChase();
+  }
+}
+
+function startChase() {
+  const cat = document.getElementById("happyCat");
+
+  cat.onclick = () => {
+    document.getElementById("subtext").innerText = chaseMessages[chaseClicks];
+    chaseClicks++;
+
+    if (chaseClicks >= 4) {
+      finalScreen();
+      return;
+    }
+
+    /* safe responsive bounds */
+    cat.style.left = Math.random() * 60 + 20 + "%";
+    cat.style.top  = Math.random() * 35 + 45 + "%";
+  };
+}
+
+function noClick() {
+  let timeLeft = 5;
+  document.body.innerHTML = `
+    <div class="clouds"></div>
+    <div class="rain"></div>
+    <h1 style="text-align:center;margin-top:180px;">oh so you hate me</h1>
+    <p id="timer" style="text-align:center;font-size:24px;">
+      closing in ${timeLeft}...
+    </p>
+    <div style="text-align:center;">
+      <img id="angry" src="angry-cat.png" style="width:240px;">
+    </div>
+  `;
+
+  const countdown = setInterval(() => {
+    timeLeft--;
+    document.getElementById("timer").innerText = `closing in ${timeLeft}...`;
+
+    if (timeLeft === 1) {
+      const boom = document.createElement("div");
+      boom.className = "explosion";
+      boom.innerText = "💥";
+      boom.style.left = "45%";
+      boom.style.top = "50%";
+      boom.style.transform = "translate(-60%, -60%)";
+      document.body.appendChild(boom);
+    }
+
+    if (timeLeft === 0) {
+      clearInterval(countdown);
+      window.close();
+    }
+  }, 1000);
+}
+
+function finalScreen() {
+  document.body.innerHTML = `
+    <div class="clouds"></div>
+    <h1 style="text-align:center;margin-top:140px;">
+      ok fine ME AND YOU i love u &lt;3!!!
+    </h1>
+    <div style="text-align:center;">
+      <img id="bear" src="bear-gif.gif" style="width:min(400px,80vw);margin-top:40px;">
+    </div>
+  `;
+
+  for (let i = 0; i < 40; i++) {
+    const star = document.createElement("div");
+    star.className = "star";
+    star.style.left = Math.random() * 100 + "vw";
+    star.style.top = Math.random() * 100 + "vh";
+    star.style.animationDelay = Math.random() * 2 + "s";
+    document.body.appendChild(star);
+  }
+}
+</script>
+</body>
+</html>
